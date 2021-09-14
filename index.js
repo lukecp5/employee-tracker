@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const disp = require('console.table');
+const { forEach } = require('lodash');
 require('dotenv').config();
 
 const db = mysql.createConnection({
@@ -135,7 +136,7 @@ function addRole(){
             if(err){
                   console.log(err);
             }
-            console.table(result);
+            // console.table(result);
 
             db.query(sql2, (err, result) => {
                   if(err){
@@ -143,7 +144,7 @@ function addRole(){
                   }
                   let departmentList = result;
 
-                  let addRoleMenu = `[
+                  let addRoleMenu = [
                         {
                               name: 'newRole',
                               type: 'input',
@@ -153,10 +154,40 @@ function addRole(){
                               name: 'salary',
                               type: 'input',
                               message: 'What is the salary for this new position?'
+                        },
+                         {     
+                              name: 'department',
+                              type: 'list',
+                              message: 'What department would you like to add this role to?',
+                              choices: function(){
+                                    let depts = [];
+                                    for(i=0; i< departmentList.length; i++){
+                                          depts.push(departmentList[i].department_name);
+                                    }
+                                    return depts;
+                              }
                         }
+                  ];
 
-                  ]`;
 
+
+                  inquirer.prompt(addRoleMenu)
+                  .then(answers=>{
+                        let roleSql = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);';
+                        db.query('SELECT department.id FROM department WHERE department_name = ?', answers.department, (err, result) => {
+                              console.log(result);
+                              const deptId = result[0].id;
+                              let sqlVars = [answers.newRole, parseInt(answers.salary), deptId];
+                              console.log(sqlVars);
+                              db.query(roleSql, sqlVars, (err, result)=>{
+                                    if(err){
+                                          console.log(err);
+                                    }
+                                    console.table(result)
+                                    cli();
+                              })
+                        })
+                  })
             })
 
       })
