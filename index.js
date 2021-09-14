@@ -47,7 +47,8 @@ function cli() {
 
                   case 'View all employees':
                   // Show all employees code
-                  console.info('Employees')
+                  showEmployees();
+                  // console.info('Employees')
                   break;
             
                   case 'Add a department':
@@ -90,7 +91,11 @@ function showRoles() {
 }
 
 function showEmployees() {
-
+      let sql = 'SELECT * FROM employee JOIN role on employee.role_id = role.role_id ORDER BY (employee_id)';
+      db.query(sql, (err, result) => {
+            console.table(result);
+            cli();
+      })
 }
 
 function addDepartment() {
