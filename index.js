@@ -267,12 +267,41 @@ function addEmployee() {
                               }
                               return roleList;
                         }
+                  },
+                  {
+                        type: 'list',
+                        name: 'manager',
+                        message: 'Who is the manager of the new employee?',
+                        choices: function(){
+                              let managerList = [];
+                              for(i=0; i < managers.length; i++){
+                                    managerList.push(managers[i].first_name + " " + managers[i].last_name);
+                              }
+                              return managerList;
+                        }
                   }
             ]
 
             inquirer.prompt(empPrompts)
             .then((answers) =>{
                   console.table(answers);
+                  const manager = answers.manager.split(' ');
+                  const managerFirstName = manager[0];
+                  const managerLastName = manager[1];
+                  // + Find the employee_id of the manager chosen from the manager list
+                  db.query('SELECT employee_id FROM employee WHERE employee.first_name = managerFirstName', (err, result) =>{
+                        if(err){
+                              console.log(err);
+                        }
+                        const managerId = result.employee_id;
+                        db.query('SELECT role_id FROM role WHERE role.title = answers.role', (err, result) =>{
+                              const roleId = result.role_id;
+                              const sqlVars = [answers.first_name, answers.last_name, managerId, roleId];
+                              db.query('INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', sqlVars, (err, result) => {
+                                    console.table(result);
+                        })
+                  })
+                  })
             })
 
       })
