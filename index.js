@@ -1,5 +1,15 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const disp = require('console.table');
+require('dotenv').config();
+
+const db = mysql.createConnection({
+      host: 'localhost',
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
+},
+console.info('Connected to the employee database'));
 
 const mainMenu = [
       {
@@ -19,13 +29,14 @@ const mainMenu = [
       }
 ]
 
-const init = function() {
+function cli() {
       inquirer.prompt(mainMenu)
       .then((menu) =>{
             switch(menu.action) {
                   case 'View all departments':
                   // Show departments code
-                  console.info('Departments')
+                  showDepartments();
+                  // console.info('Departments')
                   break;
                   
                   case 'View all roles':
@@ -62,7 +73,12 @@ const init = function() {
 }
 
 function showDepartments() {
-
+db.query('SELECT id as department_id, department_name FROM department', (err, result) => {
+      console.log(`------------------------------------------------------`);
+      console.table(result);
+      console.log(`------------------------------------------------------`);
+      cli();
+})
 }
 
 function showRoles() {
@@ -86,7 +102,7 @@ function addEmployee() {
 }
 
 function updateEmployee(){
-      
+
 }
 
-init();
+cli();
