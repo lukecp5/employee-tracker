@@ -286,26 +286,30 @@ function addEmployee() {
             .then((answers) =>{
                   console.table(answers);
                   const manager = answers.manager.split(' ');
+                  console.log(manager);
                   const managerFirstName = manager[0];
                   const managerLastName = manager[1];
                   // + Find the employee_id of the manager chosen from the manager list
-                  db.query('SELECT employee_id FROM employee WHERE employee.first_name = managerFirstName', (err, result) =>{
+                  db.query('SELECT employee_id FROM employee WHERE employee.first_name = ?', managerFirstName, (err, result) =>{
                         if(err){
                               console.log(err);
                         }
-                        const managerId = result.employee_id;
-                        db.query('SELECT role_id FROM role WHERE role.title = answers.role', (err, result) =>{
-                              const roleId = result.role_id;
+                        const managerId = result[0].employee_id;
+                        db.query('SELECT role_id FROM role WHERE role.title = ?', answers.role, (err, result) =>{
+                              const roleId = result[0].role_id;
+                              console.log("ROLE ID:" + roleId);
                               const sqlVars = [answers.first_name, answers.last_name, managerId, roleId];
+                              console.log(sqlVars);
                               db.query('INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', sqlVars, (err, result) => {
                                     console.table(result);
                         })
                   })
                   })
             })
-
       })
-})}
+})
+
+}
 
 function updateEmployee() {}
 
