@@ -53,22 +53,26 @@ function cli() {
             
                   case 'Add a department':
                   // Add a department code
-                  console.info('Add a department')
+                  addDepartment();
+                  // console.info('Add a department')
                   break;
             
                   case 'Add a role':
                   // Add a role code
-                  console.info('Add a role')
+                  addRole();
+                  // console.info('Add a role')
                   break;
 
                   case 'Add an employee':
-                  // Add an employee code
-                  console.info('Add an employee')
+                  // Add an employee code\
+                  addEmployee();
+                  // console.info('Add an employee')
                   break;
 
                   case 'Update an employee role':
+                  updateEmployee();
                   // Code to update an employee role
-                  console.info('Update an employee role')
+                  // console.info('Update an employee role')
                   break;
             }
       })
@@ -99,6 +103,23 @@ function showEmployees() {
 }
 
 function addDepartment() {
+
+      inquire.prompt(
+            {
+                  name: 'department',
+                  type: 'input',
+                  message: 'Enter the name of the department you would like to add'
+            })
+            .then((answers)=>{
+                  db.query('INSERT INTO department(department_name) VALUES (?)', department, (err, result)=>{
+                        if(err){
+                              console.log(err);
+                        }else{
+                              console.log(result);
+                        }
+                        cli();
+                  })
+            })
 
 }
 
