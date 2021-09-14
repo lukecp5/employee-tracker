@@ -61,4 +61,32 @@ const init = function() {
       })
 }
 
+function showDepartments() {
+
+}
+
+function showRoles() {
+
+}
+
+function showEmployees() {
+
+}
+
+function addDepartment() {
+
+}
+
+function addRole(){
+
+}
+
+function addEmployee() {
+
+}
+
+function updateEmployee(){
+      
+}
+
 init();
