@@ -238,8 +238,8 @@ function addEmployee() {
                         }else{
                               result[i].manager = result[result[i].manager_id - 1].first_name + " " + result[result[i].manager_id - 1].last_name;
                         }
+                        delete result[i].manager_id;
             }
-            delete result[i].manager_id;
             console.table(result);
 
             let managers = result;
@@ -270,7 +270,7 @@ function addEmployee() {
                   }
             ]
 
-            inquire.prompt(empPrompts)
+            inquirer.prompt(empPrompts)
             .then((answers) =>{
                   console.table(answers);
             })
