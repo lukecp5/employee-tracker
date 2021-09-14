@@ -104,14 +104,14 @@ function showEmployees() {
 
 function addDepartment() {
 
-      inquire.prompt(
+      inquirer.prompt(
             {
                   name: 'department',
                   type: 'input',
                   message: 'Enter the name of the department you would like to add'
             })
             .then((answers)=>{
-                  db.query('INSERT INTO department(department_name) VALUES (?)', department, (err, result)=>{
+                  db.query('INSERT INTO department(department_name) VALUES (?)', answers.department, (err, result)=>{
                         if(err){
                               console.log(err);
                         }else{
