@@ -41,7 +41,8 @@ function cli() {
                   
                   case 'View all roles':
                   // Show all roles code
-                  console.info('Roles')
+                  showRoles();
+                  // console.info('Roles')
                   break;
 
                   case 'View all employees':
@@ -73,16 +74,19 @@ function cli() {
 }
 
 function showDepartments() {
-db.query('SELECT id as department_id, department_name FROM department', (err, result) => {
-      // console.log(`------------------------------------------------------`);
+      let sql = 'SELECT id as department_id, department_name FROM department';
+db.query(sql, (err, result) => {
       console.table(result);
-      // console.log(`------------------------------------------------------`);
       cli();
 })
 }
 
 function showRoles() {
-
+      let sql = 'SELECT role_id as id, title, salary, department_id FROM role JOIN department on role.department_id = department.id';
+      db.query(sql, (err, result) => {
+            console.table(result);
+            cli();
+      })
 }
 
 function showEmployees() {
