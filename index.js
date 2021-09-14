@@ -74,9 +74,9 @@ function cli() {
 
 function showDepartments() {
 db.query('SELECT id as department_id, department_name FROM department', (err, result) => {
-      console.log(`------------------------------------------------------`);
+      // console.log(`------------------------------------------------------`);
       console.table(result);
-      console.log(`------------------------------------------------------`);
+      // console.log(`------------------------------------------------------`);
       cli();
 })
 }
