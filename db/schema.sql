@@ -12,7 +12,7 @@ CREATE TABLE department (
 DROP TABLE IF EXISTS role;
 
 CREATE TABLE role (
-      role_id INT NOT NULL,
+      role_id INT NOT NULL AUTO_INCREMENT,
       title VARCHAR(30),
       salary DECIMAL,
       department_id INT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE role (
 
 DROP TABLE IF EXISTS employee;
 CREATE TABLE employee (
-      id INT PRIMARY KEY,
+      employee_id INT PRIMARY KEY AUTO_INCREMENT,
       first_name VARCHAR(30) NOT NULL,
       last_name VARCHAR(30) NOT NULL,
       role_id INT NULL,
