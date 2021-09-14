@@ -87,7 +87,7 @@ db.query(sql, (err, result) => {
 }
 
 function showRoles() {
-      let sql = 'SELECT role_id as id, title, salary, department_id FROM role JOIN department on role.department_id = department.id';
+      let sql = 'SELECT role_id as id, title, salary, department_id FROM role INNER JOIN department on role.department_id = department.id';
       db.query(sql, (err, result) => {
             console.table(result);
             cli();
@@ -95,8 +95,11 @@ function showRoles() {
 }
 
 function showEmployees() {
-      let sql = 'SELECT * FROM employee JOIN role on employee.role_id = role.role_id ORDER BY (employee_id)';
+      let sql = 'SELECT employee.employee_id as id, employee.first_name, employee.last_name, role.title, role.salary, department.department_name as department FROM employee INNER JOIN role on employee.role_id = role.role_id INNER JOIN department on role.department_id = department.id ORDER BY (employee.employee_id) ASC';
       db.query(sql, (err, result) => {
+            if(err){
+                  console.log(err);
+            }
             console.table(result);
             cli();
       })
@@ -124,6 +127,39 @@ function addDepartment() {
 }
 
 function addRole(){
+
+      let sql1 = "SELECT role.title AS role, role.salary, department.department_name FROM role INNER JOIN department ON department.id = role.department_id;";
+      let sql2 = "SELECT department.department_name FROM department";
+
+      db.query(sql1, (err, result) => {
+            if(err){
+                  console.log(err);
+            }
+            console.table(result);
+
+            db.query(sql2, (err, result) => {
+                  if(err){
+                        console.log(err);
+                  }
+                  let departmentList = result;
+
+                  let addRoleMenu = `[
+                        {
+                              name: 'newRole',
+                              type: 'input',
+                              message: 'What role would you like to add?'
+                        },
+                        {
+                              name: 'salary',
+                              type: 'input',
+                              message: 'What is the salary for this new position?'
+                        }
+
+                  ]`;
+
+            })
+
+      })
 
 }
 
