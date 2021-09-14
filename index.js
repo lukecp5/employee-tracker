@@ -219,7 +219,7 @@ function addRole() {
 function addEmployee() {
       let rolesSql = "SELECT title FROM role";
       let managerSql =         
-      "SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id FROM employee JOIN role ON role.role_id = employee.role_id JOIN department ON role.department_id = department.id ORDER BY employee.id;"
+      "SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id FROM employee JOIN role ON role.role_id = employee.role_id JOIN department ON role.department_id = department.id ORDER BY employee.employee_id;"
 
       db.query(rolesSql, (err, result)=>{
             if(err){
@@ -235,8 +235,11 @@ function addEmployee() {
                   for(i=0; i < result.length; i++) {
                         if(result[i].manager_id == 0){
                               result[i].manager = 'None';
+                        }else{
+                              result[i].manager = result[result[i].manager_id - 1].first_name + " " + result[result[i].manager_id - 1].last_name;
                         }
             }
+            console.log(result);
       })
 
       })
