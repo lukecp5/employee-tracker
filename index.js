@@ -348,6 +348,7 @@ function addEmployee() {
           );
         };
 
+        // + Function that will be called once all of the information for the INSERT query has been gathered. It takes in sqlVars and uses the items in the array as the values for the INSERT query.
         insertIntoTable = (sqlVars) => {
           console.log("Inside insertIntoTable function: " + sqlVars);
           const insertSql =
