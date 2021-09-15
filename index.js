@@ -293,8 +293,8 @@ function addEmployee() {
           choices: getManagerList(),
         },
       ];
-                              return managerList;
-                        }
+          db.query(
+        };
                   }
             ]
 
