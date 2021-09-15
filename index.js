@@ -201,20 +201,28 @@ const addRole = () => {
             const deptId = result[0].id;
             let sqlVars = [answers.newRole, parseInt(answers.salary), deptId];
             console.log(sqlVars);
-            db.query(roleSql, sqlVars, (err, result) => {
-              if (err) {
-                console.log(err);
-              }
-              console.table(result);
-              // + Run the main application function to bring the user back to the main menu
-              cli();
-            });
+          // + Run the INSERT query to add the new role to the employee.role table of the db
+          db.query(roleSql, sqlVars, (err, result) => {
+            if (err) {
+              console.log(err);
+            }
+            // + Run the main application function to bring the user back to the main menu
+            cli();
+          });
+        }
+        db.query(
+          "SELECT department.id FROM department WHERE department_name = ?",
+          answers.department,
+          (err, result) => {
+            console.log(result);
+            const deptId = result[0].id;
+            genRoleSql(deptId);
           }
         );
       });
     });
   });
-}
+};
 
 function addEmployee() {
   // + Get list of roles to use as options for the new employee role
