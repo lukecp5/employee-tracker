@@ -193,14 +193,10 @@ const addRole = () => {
       inquirer.prompt(addRoleMenu).then((answers) => {
         let roleSql =
           "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);";
-        db.query(
-          "SELECT department.id FROM department WHERE department_name = ?",
-          answers.department,
-          (err, result) => {
-            console.log(result);
-            const deptId = result[0].id;
-            let sqlVars = [answers.newRole, parseInt(answers.salary), deptId];
-            console.log(sqlVars);
+
+        function genRoleSql(deptId) {
+          let sqlVars = [answers.newRole, parseInt(answers.salary), deptId];
+          console.log(sqlVars);
           // + Run the INSERT query to add the new role to the employee.role table of the db
           db.query(roleSql, sqlVars, (err, result) => {
             if (err) {
