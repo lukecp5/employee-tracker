@@ -384,6 +384,23 @@ function addEmployee() {
   });
 }
 
-function updateEmployee() {}
+function updateEmployee() {
+  const employeeListSql = 'SELECT * FROM employee';
+  const updateRoleQs = [
+    {
+
+    },
+    {
+
+    },
+    {
+      
+    }
+  ]
+  db.query(employeeListSql, (err, result)=>{
+    err? console.log(err):console.log('Successfully retrieved the list of employees');
+
+  })
+}
 
 cli();
