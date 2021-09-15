@@ -379,6 +379,9 @@ function addEmployee() {
         }
       }
         startTheProcess();
+      }); // + End of inquirer then()
+    });
+  });
 }
 
 function updateEmployee() {}
