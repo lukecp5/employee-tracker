@@ -225,16 +225,27 @@ function addEmployee() {
   let managerSql =
     "SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id FROM employee JOIN role ON role.role_id = employee.role_id JOIN department ON role.department_id = department.id WHERE employee.manager_id = 0 ORDER BY employee.employee_id;";
 
-      db.query(rolesSql, (err, result)=>{
-            if(err){
-                  console.log(err);
-            }
-            let roles = result;
+  db.query(rolesSql, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    let roles = result;
 
-            db.query(managerSql, (err,result)=>{
-                  if(err){
-                        console.log(err);
-                  }
+    db.query(managerSql, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+
+      function getManagerList() {
+        let managerList = [];
+        for (i = 0; i < managers.length; i++) {
+          managerList.push(
+            managers[i].first_name + " " + managers[i].last_name
+          );
+        }
+        managerList.push("No Manager");
+        return managerList;
+      }
                   // + For each manager in the list, create a new manager column with the first and last name of each manager. This will be used in the manager selection list in the inquirer prompt below.
                   for(i=0; i < result.length; i++) {
                         if(result[i].manager_id == 0){
