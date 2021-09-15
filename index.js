@@ -218,10 +218,8 @@ function addRole() {
 
 function addEmployee() {
   // + Get list of roles to use as options for the new employee role
-      let rolesSql = "SELECT title FROM role";
+  let rolesSql = "SELECT title FROM role";
   // + Get list of managers to use as options for the new employee's manager
-  let managerSql =
-      let managerSql =         
   let managerSql =
     "SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id FROM employee JOIN role ON role.role_id = employee.role_id JOIN department ON role.department_id = department.id WHERE employee.manager_id = 0 ORDER BY employee.employee_id;";
 
