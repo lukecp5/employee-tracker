@@ -146,12 +146,12 @@ function addDepartment() {
 }
 
 function addRole() {
-      // + This queries the role, salary, and department for each role to be used later
+  // + This queries the role, salary, and department for each role to be used later
   let sql1 =
     "SELECT role.title AS role, role.salary, department.department_name FROM role INNER JOIN department ON department.id = role.department_id;";
-  
-      // + This queries the department table to get a list of all departments to use as menu options in the inquirer list prompt of the addRole() menu, and is then used to find the ID of the selected department
-    let sql2 = "SELECT department.department_name FROM department";
+
+  // + This queries the department table to get a list of all departments to use as menu options in the inquirer list prompt of the addRole() menu, and is then used to find the ID of the selected department
+  let sql2 = "SELECT department.department_name FROM department";
 
   db.query(sql1, (err, result) => {
     if (err) {
@@ -218,100 +218,170 @@ function addRole() {
 
 function addEmployee() {
   // + Get list of roles to use as options for the new employee role
-      let rolesSql = "SELECT title FROM role";
+  let rolesSql = "SELECT title FROM role";
   // + Get list of managers to use as options for the new employee's manager
-      let managerSql =         
-      "SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id FROM employee JOIN role ON role.role_id = employee.role_id JOIN department ON role.department_id = department.id ORDER BY employee.employee_id;"
+  let managerSql =
+    "SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id FROM employee JOIN role ON role.role_id = employee.role_id JOIN department ON role.department_id = department.id WHERE employee.manager_id = 0 ORDER BY employee.employee_id;";
 
-      db.query(rolesSql, (err, result)=>{
-            if(err){
-                  console.log(err);
-            }
-            let roles = result;
+  db.query(rolesSql, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    let roles = result;
 
-            db.query(managerSql, (err,result)=>{
-                  if(err){
-                        console.log(err);
-                  }
-                  // + For each manager in the list, create a new manager column with the first and last name of each manager. This will be used in the manager selection list in the inquirer prompt below.
-                  for(i=0; i < result.length; i++) {
-                        if(result[i].manager_id == 0){
-                              result[i].manager = 'None';
-                        }else{
-                              result[i].manager = result[result[i].manager_id - 1].first_name + " " + result[result[i].manager_id - 1].last_name;
-                        }
-                        delete result[i].manager_id;
+    db.query(managerSql, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+
+      function getManagerList() {
+        let managerList = [];
+        for (i = 0; i < managers.length; i++) {
+          managerList.push(
+            managers[i].first_name + " " + managers[i].last_name
+          );
+        }
+        managerList.push("No Manager");
+        return managerList;
+      }
+      // + For each manager in the list, create a new manager column with the first and last name of each manager. This will be used in the manager selection list in the inquirer prompt below.
+      for (i = 0; i < result.length; i++) {
+        if (result[i].manager_id == 0) {
+          result[i].manager = "None";
+        } else {
+          result[i].manager =
+            result[result[i].manager_id - 1].first_name +
+            " " +
+            result[result[i].manager_id - 1].last_name;
+        }
+        delete result[i].manager_id;
+      }
+      console.table(result);
+
+      let managers = result;
+
+      const empPrompts = [
+        {
+          type: "input",
+          name: "first_name",
+          message: "What is the first name of the employee?",
+        },
+        {
+          type: "input",
+          name: "last_name",
+          message: "What is the last name of the employee?",
+        },
+        {
+          type: "list",
+          name: "role",
+          message: "What is the role of the new employee?",
+          choices: function () {
+            let roleList = [];
+
+            for (i = 0; i < roles.length; i++) {
+              roleList.push(roles[i].title);
             }
+            return roleList;
+          },
+        },
+        {
+          type: "list",
+          name: "manager",
+          message: "Who is the manager of the new employee?",
+          choices: getManagerList(),
+        },
+      ];
+
+      inquirer.prompt(empPrompts).then((answers) => {
+        console.table(answers);
+
+        // + Function for generating the array of variables to be used in the insert query. After generating the array of variables for the query, it calls insertIntoTable(sqlVars)
+        genSqlVars = (managerId) => {
+          // + In order to properly INSERT the new employee into the database, this query finds the role_id that matches the role description the user selected. Once it finds the selected role, it sets the roleId variable to the selected roles role_id from the role table.
+          db.query(
+            "SELECT role_id FROM role WHERE role.title = ?",
+            answers.role,
+            (err, result) => {
+              // + If there's an error with the query, print the error. Otherwise, send the console a success message.
+              err ? console.log(err) : console.log("Generating SQL query...");
+
+              // + set roleId to the role_id that corresponds to the roles table's title column of the selected role.
+              const roleId = result[0].role_id;
+
+              // + Create array to be used for the INSERT query
+              let sqlVars = [
+                answers.first_name,
+                answers.last_name,
+                roleId,
+                managerId,
+              ];
+
+              // + Debugging message used when working out the flow of the addEmployee() function.
+              console.info("Inside genSqlVars function: " + sqlVars);
+
+              // + Execute the insertIntoTable function to insert the new employee into the database, passing in the sqlVars that were created earlier
+              insertIntoTable(sqlVars);
+            }
+          );
+        };
+        // + Function that will be called if the user chooses a manager from the list, it then passes in the answers and the managerId to the genSqlVars function
+        getManagerId = (managerFirstName, managerLastName) => {
+          const mgrIdSQL =
+            "SELECT employee_id FROM employee WHERE employee.first_name = ? and employee.last_name = ?";
+          // + Find the employee_id of the manager chosen from the manager list, after retrieving the manager_id, call genSqlVars(managerId)
+          db.query(
+            mgrIdSQL,
+            [managerFirstName, managerLastName],
+            (err, result) => {
+              // + If there's an error with the query, print the error. Otherwise, send the console a success message.
+              if (err) {
+                console.error(err);
+              } else {
+                console.info("Manager ID retrieved");
+              }
+              // + Set the managerId = the id of the manager chosen from the manager prompt, found by querying the database for employee.first_name & employee.last_name
+              const managerId = result[0].employee_id;
+              console.log(`managerId: ${managerId}`);
+              // + Generate the SQL variables with the correct managerId
+              genSqlVars(managerId);
+            }
+          );
+        };
+
+        // + Function that will be called once all of the information for the INSERT query has been gathered. It takes in sqlVars and uses the items in the array as the values for the INSERT query.
+        insertIntoTable = (sqlVars) => {
+          console.log("Inside insertIntoTable function: " + sqlVars);
+          const insertSql =
+            "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+          db.query(insertSql, sqlVars, (err, result) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log(
+              "Successfully inserted the new employee into the database"
+            );
             console.table(result);
+            cli();
+          });
+          
+        };
 
-            let managers = result;
-
-            const empPrompts = [
-                  {
-                        type: 'input',
-                        name: 'first_name',
-                        message: 'What is the first name of the employee?'
-                  },
-                  {
-                        type: 'input',
-                        name: 'last_name',
-                        message: 'What is the last name of the employee?'
-                  },
-                  {
-                        type: 'list',
-                        name: 'role',
-                        message: 'What is the role of the new employee?',
-                        choices: function(){
-                              let roleList = [];
-
-                              for(i=0; i < roles.length; i++){
-                                    roleList.push(roles[i].title);
-                              }
-                              return roleList;
-                        }
-                  },
-                  {
-                        type: 'list',
-                        name: 'manager',
-                        message: 'Who is the manager of the new employee?',
-                        choices: function(){
-                              let managerList = [];
-                              for(i=0; i < managers.length; i++){
-                                    managerList.push(managers[i].first_name + " " + managers[i].last_name);
-                              }
-                              return managerList;
-                        }
-                  }
-            ]
-
-            inquirer.prompt(empPrompts)
-            .then((answers) =>{
-                  console.table(answers);
-                  const manager = answers.manager.split(' ');
-                  console.log(manager);
-                  const managerFirstName = manager[0];
-                  const managerLastName = manager[1];
-                  // + Find the employee_id of the manager chosen from the manager list
-                  db.query('SELECT employee_id FROM employee WHERE employee.first_name = ?', managerFirstName, (err, result) =>{
-                        if(err){
-                              console.log(err);
-                        }
-                        const managerId = result[0].employee_id;
-                        db.query('SELECT role_id FROM role WHERE role.title = ?', answers.role, (err, result) =>{
-                              const roleId = result[0].role_id;
-                              console.log("ROLE ID:" + roleId);
-                              const sqlVars = [answers.first_name, answers.last_name, managerId, roleId];
-                              console.log(sqlVars);
-                              db.query('INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', sqlVars, (err, result) => {
-                                    console.table(result);
-                        })
-                        cli();
-                  })
-                  })
-            })
-      })
-})
-
+        // + This is where the whole INSERT query creation begins - If a manager was selected, get that managers ID. If no manager was selected, set the manager_id to 0 and generate the sqlVars.
+        startTheProcess = () => {
+        if (answers.manager != "No Manager") {
+          const manager = answers.manager.split(" ");
+          const managerFirstName = manager[0];
+          const managerLastName = manager[1];
+          getManagerId(managerFirstName, managerLastName);
+        } else {
+          var managerId = 0;
+          genSqlVars(managerId);
+        }
+      }
+        startTheProcess();
+      }); // + End of inquirer then()
+    });
+  });
 }
 
 function updateEmployee() {}
