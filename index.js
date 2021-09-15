@@ -246,16 +246,19 @@ function addEmployee() {
         managerList.push("No Manager");
         return managerList;
       }
-                  // + For each manager in the list, create a new manager column with the first and last name of each manager. This will be used in the manager selection list in the inquirer prompt below.
-                  for(i=0; i < result.length; i++) {
-                        if(result[i].manager_id == 0){
-                              result[i].manager = 'None';
-                        }else{
-                              result[i].manager = result[result[i].manager_id - 1].first_name + " " + result[result[i].manager_id - 1].last_name;
-                        }
-                        delete result[i].manager_id;
-            }
-            console.table(result);
+      // + For each manager in the list, create a new manager column with the first and last name of each manager. This will be used in the manager selection list in the inquirer prompt below.
+      for (i = 0; i < result.length; i++) {
+        if (result[i].manager_id == 0) {
+          result[i].manager = "None";
+        } else {
+          result[i].manager =
+            result[result[i].manager_id - 1].first_name +
+            " " +
+            result[result[i].manager_id - 1].last_name;
+        }
+        delete result[i].manager_id;
+      }
+      console.table(result);
 
             let managers = result;
 
