@@ -88,7 +88,7 @@ function cli() {
 }
 
 // + Function that queries the department table for all of the departments in the employee_db
-function showDepartments() {
+const showDepartments = () => {
   let sql = "SELECT id as department_id, department_name FROM department";
   db.query(sql, (err, result) => {
     // + Displays the department IDs and names in the format of a table inside the console.
@@ -96,9 +96,9 @@ function showDepartments() {
     // + Run the main application function to bring the user back to the main menu
     cli();
   });
-}
+};
 
-function showRoles() {
+const showRoles = () => {
   let sql =
     "SELECT role_id as id, title, salary, department_id FROM role INNER JOIN department on role.department_id = department.id";
   db.query(sql, (err, result) => {
@@ -106,9 +106,9 @@ function showRoles() {
     // + Run the main application function to bring the user back to the main menu
     cli();
   });
-}
+};
 
-function showEmployees() {
+const showEmployees = () => {
   let sql =
     "SELECT employee.employee_id as id, employee.first_name, employee.last_name, role.title, role.salary, department.department_name as department FROM employee INNER JOIN role on employee.role_id = role.role_id INNER JOIN department on role.department_id = department.id ORDER BY (employee.employee_id) ASC";
   db.query(sql, (err, result) => {
@@ -119,9 +119,9 @@ function showEmployees() {
     // + Run the main application function to bring the user back to the main menu
     cli();
   });
-}
+};
 
-function addDepartment() {
+const addDepartment = () => {
   inquirer
     .prompt({
       name: "department",
@@ -143,9 +143,9 @@ function addDepartment() {
         }
       );
     });
-}
+};
 
-function addRole() {
+const addRole = () => {
   // + This queries the role, salary, and department for each role to be used later
   let sql1 =
     "SELECT role.title AS role, role.salary, department.department_name FROM role INNER JOIN department ON department.id = role.department_id;";
