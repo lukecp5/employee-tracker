@@ -355,6 +355,19 @@ function addEmployee() {
       })
 })
 
+        // + This is where the whole INSERT query creation begins - If a manager was selected, get that managers ID. If no manager was selected, set the manager_id to 0 and generate the sqlVars.
+        startTheProcess = () => {
+        if (answers.manager != "No Manager") {
+          const manager = answers.manager.split(" ");
+          const managerFirstName = manager[0];
+          const managerLastName = manager[1];
+          getManagerId(managerFirstName, managerLastName);
+        } else {
+          var managerId = 0;
+          genSqlVars(managerId);
+        }
+      }
+        startTheProcess();
 }
 
 function updateEmployee() {}
