@@ -164,7 +164,13 @@ const addRole = () => {
         console.log(err);
       }
       let departmentList = result;
-
+      getDepartmentList = (departmentList) => {
+        let depts = [];
+        for (i = 0; i < departmentList.length; i++) {
+          depts.push(departmentList[i].department_name);
+        }
+        return depts;
+      };
       let addRoleMenu = [
         {
           name: "newRole",
@@ -180,13 +186,7 @@ const addRole = () => {
           name: "department",
           type: "list",
           message: "What department would you like to add this role to?",
-          choices: function () {
-            let depts = [];
-            for (i = 0; i < departmentList.length; i++) {
-              depts.push(departmentList[i].department_name);
-            }
-            return depts;
-          },
+          choices: getDepartmentList(departmentList),
         },
       ];
 
