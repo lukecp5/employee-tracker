@@ -324,8 +324,28 @@ function addEmployee() {
             }
           );
         };
-                  }
-            ]
+        // + Function that will be called if the user chooses a manager from the list, it then passes in the answers and the managerId to the genSqlVars function
+        getManagerId = (managerFirstName, managerLastName) => {
+          const mgrIdSQL =
+            "SELECT employee_id FROM employee WHERE employee.first_name = ? and employee.last_name = ?";
+          // + Find the employee_id of the manager chosen from the manager list, after retrieving the manager_id, call genSqlVars(managerId)
+          db.query(
+            mgrIdSQL,
+            [managerFirstName, managerLastName],
+            (err, result) => {
+              // + If there's an error with the query, print the error. Otherwise, send the console a success message.
+              if (err) {
+                console.error(err);
+              } else {
+                console.info("Manager ID retrieved");
+              }
+              // + Set the managerId = the id of the manager chosen from the manager prompt, found by querying the database for employee.first_name & employee.last_name
+              const managerId = result[0].employee_id;
+              console.log(`managerId: ${managerId}`);
+              // + Generate the SQL variables with the correct managerId
+            }
+          );
+        };
 
             inquirer.prompt(empPrompts)
             .then((answers) =>{
