@@ -343,6 +343,7 @@ function addEmployee() {
               const managerId = result[0].employee_id;
               console.log(`managerId: ${managerId}`);
               // + Generate the SQL variables with the correct managerId
+              genSqlVars(managerId);
             }
           );
         };
