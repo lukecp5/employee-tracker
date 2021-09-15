@@ -348,33 +348,22 @@ function addEmployee() {
           );
         };
 
-            inquirer.prompt(empPrompts)
-            .then((answers) =>{
-                  console.table(answers);
-                  const manager = answers.manager.split(' ');
-                  console.log(manager);
-                  const managerFirstName = manager[0];
-                  const managerLastName = manager[1];
-                  // + Find the employee_id of the manager chosen from the manager list
-                  db.query('SELECT employee_id FROM employee WHERE employee.first_name = ?', managerFirstName, (err, result) =>{
-                        if(err){
-                              console.log(err);
-                        }
-                        const managerId = result[0].employee_id;
-                        db.query('SELECT role_id FROM role WHERE role.title = ?', answers.role, (err, result) =>{
-                              const roleId = result[0].role_id;
-                              console.log("ROLE ID:" + roleId);
-                              const sqlVars = [answers.first_name, answers.last_name, managerId, roleId];
-                              console.log(sqlVars);
-                              db.query('INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', sqlVars, (err, result) => {
-                                    console.table(result);
-                        })
-                        cli();
-                  })
-                  })
-            })
-      })
-})
+        insertIntoTable = (sqlVars) => {
+          console.log("Inside insertIntoTable function: " + sqlVars);
+          const insertSql =
+            "INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+          db.query(insertSql, sqlVars, (err, result) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log(
+              "Successfully inserted the new employee into the database"
+            );
+            console.table(result);
+            cli();
+          });
+          
+        };
 
         // + This is where the whole INSERT query creation begins - If a manager was selected, get that managers ID. If no manager was selected, set the manager_id to 0 and generate the sqlVars.
         startTheProcess = () => {
