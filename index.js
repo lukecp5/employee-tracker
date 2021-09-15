@@ -146,12 +146,12 @@ function addDepartment() {
 }
 
 function addRole() {
-      // + This queries the role, salary, and department for each role to be used later
+  // + This queries the role, salary, and department for each role to be used later
   let sql1 =
     "SELECT role.title AS role, role.salary, department.department_name FROM role INNER JOIN department ON department.id = role.department_id;";
-  
-      // + This queries the department table to get a list of all departments to use as menu options in the inquirer list prompt of the addRole() menu, and is then used to find the ID of the selected department
-    let sql2 = "SELECT department.department_name FROM department";
+
+  // + This queries the department table to get a list of all departments to use as menu options in the inquirer list prompt of the addRole() menu, and is then used to find the ID of the selected department
+  let sql2 = "SELECT department.department_name FROM department";
 
   db.query(sql1, (err, result) => {
     if (err) {
