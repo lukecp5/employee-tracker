@@ -217,7 +217,9 @@ function addRole() {
 }
 
 function addEmployee() {
+  // + Get list of roles to use as options for the new employee role
       let rolesSql = "SELECT title FROM role";
+  // + Get list of managers to use as options for the new employee's manager
       let managerSql =         
       "SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id FROM employee JOIN role ON role.role_id = employee.role_id JOIN department ON role.department_id = department.id ORDER BY employee.employee_id;"
 
@@ -231,7 +233,7 @@ function addEmployee() {
                   if(err){
                         console.log(err);
                   }
-
+                  // + For each manager in the list, create a new manager column with the first and last name of each manager. This will be used in the manager selection list in the inquirer prompt below.
                   for(i=0; i < result.length; i++) {
                         if(result[i].manager_id == 0){
                               result[i].manager = 'None';
@@ -303,6 +305,7 @@ function addEmployee() {
                               db.query('INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', sqlVars, (err, result) => {
                                     console.table(result);
                         })
+                        cli();
                   })
                   })
             })
