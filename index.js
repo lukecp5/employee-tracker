@@ -293,7 +293,38 @@ function addEmployee() {
           choices: getManagerList(),
         },
       ];
+
+      inquirer.prompt(empPrompts).then((answers) => {
+        console.table(answers);
+
+        // + Function for generating the array of variables to be used in the insert query. After generating the array of variables for the query, it calls insertIntoTable(sqlVars)
+        genSqlVars = (managerId) => {
+          // + In order to properly INSERT the new employee into the database, this query finds the role_id that matches the role description the user selected. Once it finds the selected role, it sets the roleId variable to the selected roles role_id from the role table.
           db.query(
+            "SELECT role_id FROM role WHERE role.title = ?",
+            answers.role,
+            (err, result) => {
+              // + If there's an error with the query, print the error. Otherwise, send the console a success message.
+              err ? console.log(err) : console.log("Generating SQL query...");
+
+              // + set roleId to the role_id that corresponds to the roles table's title column of the selected role.
+              const roleId = result[0].role_id;
+
+              // + Create array to be used for the INSERT query
+              let sqlVars = [
+                answers.first_name,
+                answers.last_name,
+                roleId,
+                managerId,
+              ];
+
+              // + Debugging message used when working out the flow of the addEmployee() function.
+              console.info("Inside genSqlVars function: " + sqlVars);
+
+              // + Execute the insertIntoTable function to insert the new employee into the database, passing in the sqlVars that were created earlier
+              insertIntoTable(sqlVars);
+            }
+          );
         };
                   }
             ]
