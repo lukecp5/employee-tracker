@@ -260,41 +260,39 @@ function addEmployee() {
       }
       console.table(result);
 
-            let managers = result;
+      let managers = result;
 
-            const empPrompts = [
-                  {
-                        type: 'input',
-                        name: 'first_name',
-                        message: 'What is the first name of the employee?'
-                  },
-                  {
-                        type: 'input',
-                        name: 'last_name',
-                        message: 'What is the last name of the employee?'
-                  },
-                  {
-                        type: 'list',
-                        name: 'role',
-                        message: 'What is the role of the new employee?',
-                        choices: function(){
-                              let roleList = [];
+      const empPrompts = [
+        {
+          type: "input",
+          name: "first_name",
+          message: "What is the first name of the employee?",
+        },
+        {
+          type: "input",
+          name: "last_name",
+          message: "What is the last name of the employee?",
+        },
+        {
+          type: "list",
+          name: "role",
+          message: "What is the role of the new employee?",
+          choices: function () {
+            let roleList = [];
 
-                              for(i=0; i < roles.length; i++){
-                                    roleList.push(roles[i].title);
-                              }
-                              return roleList;
-                        }
-                  },
-                  {
-                        type: 'list',
-                        name: 'manager',
-                        message: 'Who is the manager of the new employee?',
-                        choices: function(){
-                              let managerList = [];
-                              for(i=0; i < managers.length; i++){
-                                    managerList.push(managers[i].first_name + " " + managers[i].last_name);
-                              }
+            for (i = 0; i < roles.length; i++) {
+              roleList.push(roles[i].title);
+            }
+            return roleList;
+          },
+        },
+        {
+          type: "list",
+          name: "manager",
+          message: "Who is the manager of the new employee?",
+          choices: getManagerList(),
+        },
+      ];
                               return managerList;
                         }
                   }
