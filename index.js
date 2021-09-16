@@ -370,12 +370,20 @@ function updateEmployee() {
 		"JOIN role ON role.role_id = employee.role_id " +
 		"JOIN department ON role.department_id = department.id " +
 		"ORDER BY employee.employee_id;";
+	
+	const sqlVars = [];
 	db.query(roleSql, (err, result) => {
 		if (err) {
 			console.log(err);
 		}
 
 		let roles = result;
+		function getRoles() {
+			let roleList = [];
+			for(i = 0; i < roles.length; i++){
+				roleList.push(roles[i].title);
+			}
+		}
 		
 		db.query(employeeSql, (err, result) => {
 			if (err) {
@@ -396,10 +404,28 @@ function updateEmployee() {
 						}
 						return emp;
 					}}];
+			let updateEmpRole = [
+				{
+					name: "newRole",
+					type: "list",
+					message: "What role would you like to assign to this employee?",
+					choices: getRoles()
+				}
+			]
 			inquirer.prompt(updateEmpInfo)
 			.then(empToUpdate => {
 				console.log(empToUpdate.employee);
+				let selectedEmployee = empToUpdate.employee;
+				sqlVars.push(selectedEmployee);
 			})
+			inquire.prompt(updateEmpRole)
+			.then((role)=>{
+				console.log(role.newRole);
+				let updatedRole = role.newRole;
+				sqlVars.push(updatedRole);
+			})
+
+			let updateSql = "";
 		});
 	});
 }
