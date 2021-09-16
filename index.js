@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 const disp = require("console.table");
 const { forEach } = require("lodash");
 require("dotenv").config();
+const {role} = require("./lib/insert");
 
 // + Create the connection the mySQL database - hosted on localhost
 const db = mysql.createConnection(
@@ -15,8 +16,8 @@ const db = mysql.createConnection(
 	},
 	// + Let's the user know they've successfully connected to the database
 	console.info("Connected to the employee database")
-);
-
+	);
+	
 // + Const holding the options for the main menu of the application, based on what the user selects, the application will perform any number of actions
 const mainMenu = [
 	{
@@ -111,7 +112,7 @@ const showRoles = () => {
 
 const showEmployees = () => {
 	let sql =
-		"SELECT employee.employee_id as id, employee.first_name, employee.last_name, role.title, role.salary, department.department_name as department FROM employee INNER JOIN role on employee.role_id = role.role_id INNER JOIN department on role.department_id = department.id ORDER BY (employee.employee_id) ASC";
+		"SELECT employee.employee_id as id, employee.first_name, employee.last_name, role.title, role.salary, department.department_name as department, employee.manager_id as manager_id FROM employee INNER JOIN role on employee.role_id = role.role_id INNER JOIN department on role.department_id = department.id ORDER BY (employee.employee_id) ASC";
 	db.query(sql, (err, result) => {
 		if (err) {
 			console.log(err);
@@ -133,9 +134,7 @@ const addDepartment = () => {
 			db.query("INSERT INTO department(department_name) VALUES (?)", answers.department, (err, result) => {
 				if (err) {
 					console.log(err);
-				} else {
-					console.log(result);
-				}
+				} 
 				// + Run the main application function to bring the user back to the main menu
 				cli();
 			});
@@ -146,10 +145,8 @@ const addRole = () => {
 	// + This queries the role, salary, and department for each role to be used later
 	let sql1 =
 		"SELECT role.title AS role, role.salary, department.department_name FROM role INNER JOIN department ON department.id = role.department_id;";
-
 	// + This queries the department table to get a list of all departments to use as menu options in the inquirer list prompt of the addRole() menu, and is then used to find the ID of the selected department
 	let sql2 = "SELECT department.department_name FROM department";
-
 	db.query(sql1, (err, result) => {
 		if (err) {
 			console.log(err);
@@ -192,7 +189,6 @@ const addRole = () => {
 
 				function genRoleSql(deptId) {
 					let sqlVars = [answers.newRole, parseInt(answers.salary), deptId];
-					console.log(sqlVars);
 					// + Run the INSERT query to add the new role to the employee.role table of the db
 					db.query(roleSql, sqlVars, (err, result) => {
 						if (err) {
@@ -206,7 +202,6 @@ const addRole = () => {
 					"SELECT department.id FROM department WHERE department_name = ?",
 					answers.department,
 					(err, result) => {
-						console.log(result);
 						const deptId = result[0].id;
 						genRoleSql(deptId);
 					}
@@ -318,7 +313,7 @@ function addEmployee() {
 						}
 						// + Set the managerId = the id of the manager chosen from the manager prompt, found by querying the database for employee.first_name & employee.last_name
 						const managerId = result[0].employee_id;
-						console.log(`managerId: ${managerId}`);
+						// console.log(`managerId: ${managerId}`);
 						// + Generate the SQL variables with the correct managerId
 						genSqlVars(managerId);
 					});
@@ -326,7 +321,7 @@ function addEmployee() {
 
 				// + Function that will be called once all of the information for the INSERT query has been gathered. It takes in sqlVars and uses the items in the array as the values for the INSERT query.
 				insertIntoTable = (sqlVars) => {
-					console.log("Inside insertIntoTable function: " + sqlVars);
+					// console.log("Inside insertIntoTable function: " + sqlVars);
 					const insertSql =
 						"INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
 					db.query(insertSql, sqlVars, (err, result) => {
@@ -334,7 +329,7 @@ function addEmployee() {
 							console.log(err);
 						}
 						console.log("Successfully inserted the new employee into the database");
-						console.table(result);
+						// console.table(result);
 						cli();
 					});
 				};
@@ -372,8 +367,10 @@ function updateEmployee() {
 	const employeeListSql = "SELECT * FROM employee";
 	const updateRoleQs = [{}, {}, {}];
 	db.query(employeeListSql, (err, result) => {
-		err ? console.log(err) : console.log("Successfully retrieved the list of employees");
+		err ? err:"";
+		
 	});
 }
 
 cli();
+
