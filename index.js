@@ -3,7 +3,6 @@ const mysql = require("mysql2");
 const disp = require("console.table");
 const { forEach } = require("lodash");
 require("dotenv").config();
-const {role} = require("./lib/insert");
 
 // + Create the connection the mySQL database - hosted on localhost
 const db = mysql.createConnection(
@@ -16,8 +15,8 @@ const db = mysql.createConnection(
 	},
 	// + Let's the user know they've successfully connected to the database
 	console.info("Connected to the employee database")
-	);
-	
+);
+
 // + Const holding the options for the main menu of the application, based on what the user selects, the application will perform any number of actions
 const mainMenu = [
 	{
@@ -134,7 +133,7 @@ const addDepartment = () => {
 			db.query("INSERT INTO department(department_name) VALUES (?)", answers.department, (err, result) => {
 				if (err) {
 					console.log(err);
-				} 
+				}
 				// + Run the main application function to bring the user back to the main menu
 				cli();
 			});
@@ -364,13 +363,45 @@ function addEmployee() {
 }
 
 function updateEmployee() {
-	const employeeListSql = "SELECT * FROM employee";
-	const updateRoleQs = [{}, {}, {}];
-	db.query(employeeListSql, (err, result) => {
-		err ? err:"";
+	const roleSql = "SELECT title FROM role";
+	const employeeSql =
+		"SELECT employee.first_name, employee.last_name, role.title, role.salary, department.department_name, employee.manager_id " +
+		"FROM employee " +
+		"JOIN role ON role.role_id = employee.role_id " +
+		"JOIN department ON role.department_id = department.id " +
+		"ORDER BY employee.employee_id;";
+	db.query(roleSql, (err, result) => {
+		if (err) {
+			console.log(err);
+		}
+
+		let roles = result;
 		
+		db.query(employeeSql, (err, result) => {
+			if (err) {
+				console.log(err);
+			}
+			let employees = result;
+
+			let updateEmpInfo = [
+				{
+					name: "employee",
+					type: "list",
+					message: "Which employee would you like to update the role of?",
+					choices: function(){
+						emp = [];
+						for(i = 0; i < employees.length; i++){
+							const managerId = i + 1;
+							emp.push(employees[i].first_name + " " + employees[i].last_name);
+						}
+						return emp;
+					}}];
+			inquirer.prompt(updateEmpInfo)
+			.then(empToUpdate => {
+				console.log(empToUpdate.employee);
+			})
+		});
 	});
 }
 
 cli();
-
