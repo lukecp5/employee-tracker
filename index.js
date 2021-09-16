@@ -371,7 +371,7 @@ function updateEmployee() {
 		"JOIN department ON role.department_id = department.id " +
 		"ORDER BY employee.employee_id;";
 	
-	const sqlVars = [];
+	let sqlVars = [];
 	db.query(roleSql, (err, result) => {
 		if (err) {
 			console.log(err);
@@ -379,10 +379,11 @@ function updateEmployee() {
 
 		let roles = result;
 		function getRoles() {
-			let roleList = [];
+			const roleList = [];
 			for(i = 0; i < roles.length; i++){
 				roleList.push(roles[i].title);
 			}
+			return roleList;
 		}
 		
 		db.query(employeeSql, (err, result) => {
@@ -390,7 +391,7 @@ function updateEmployee() {
 				console.log(err);
 			}
 			let employees = result;
-
+			console.table(employees);
 			let updateEmpInfo = [
 				{
 					name: "employee",
@@ -411,21 +412,45 @@ function updateEmployee() {
 					message: "What role would you like to assign to this employee?",
 					choices: getRoles()
 				}
-			]
+			];
 			inquirer.prompt(updateEmpInfo)
 			.then(empToUpdate => {
 				console.log(empToUpdate.employee);
-				let selectedEmployee = empToUpdate.employee;
+				let selectedEmployee = empToUpdate.employee.split(" ")[0];
 				sqlVars.push(selectedEmployee);
-			})
-			inquire.prompt(updateEmpRole)
-			.then((role)=>{
-				console.log(role.newRole);
-				let updatedRole = role.newRole;
-				sqlVars.push(updatedRole);
+				console.log(sqlVars);
+				
+				inquirer.prompt(updateEmpRole)
+				.then((role)=>{
+					console.log(role.newRole);
+					let updatedRole = role.newRole;
+					sqlVars.push(updatedRole);
+					console.log(sqlVars);
+					var roleId;
+					db.query("SELECT role_id FROM role WHERE title = ?", sqlVars[1], (err, result) => {
+						if(err) throw err;
+						roleId = result[0].role_id;
+						sqlVars.pop();
+						sqlVars.push(roleId);
+						sqlVars.reverse();
+						console.log(sqlVars);
+						let updateSql = "UPDATE employee SET role_id = ? WHERE first_name = ?";
+						db.query(updateSql, sqlVars, (err, result) => {
+								if(err) throw err;
+								console.log(result);
+							})
+					})
+					console.log("----------------" + sqlVars);
+					console.log("ROLE ID: " + roleId);
+
+					
+				});
 			})
 
-			let updateSql = "";
+				// updateTheRole(sqlVars);
+			
+			console.log(sqlVars);
+
 		});
 	});
 }
