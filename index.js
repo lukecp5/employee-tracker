@@ -283,7 +283,7 @@ function addEmployee() {
 					// + In order to properly INSERT the new employee into the database, this query finds the role_id that matches the role description the user selected. Once it finds the selected role, it sets the roleId variable to the selected roles role_id from the role table.
 					db.query("SELECT role_id FROM role WHERE role.title = ?", answers.role, (err, result) => {
 						// + If there's an error with the query, print the error. Otherwise, send the console a success message.
-						err ? console.log(err) : console.log("Generating SQL query...");
+						err ? console.log(err) : console.log("Processing...");
 
 						// + set roleId to the role_id that corresponds to the roles table's title column of the selected role.
 						const roleId = result[0].role_id;
@@ -327,7 +327,7 @@ function addEmployee() {
 						if (err) {
 							console.log(err);
 						}
-						console.log("Successfully inserted the new employee into the database");
+						console.log(`Successfully inserted ${first_name} ${last_name} into the database`);
 						// console.table(result);
 						cli();
 					});
@@ -370,7 +370,7 @@ function updateEmployee() {
 		"JOIN role ON role.role_id = employee.role_id " +
 		"JOIN department ON role.department_id = department.id " +
 		"ORDER BY employee.employee_id;";
-	
+
 	let sqlVars = [];
 	db.query(roleSql, (err, result) => {
 		if (err) {
@@ -380,77 +380,67 @@ function updateEmployee() {
 		let roles = result;
 		function getRoles() {
 			const roleList = [];
-			for(i = 0; i < roles.length; i++){
+			for (i = 0; i < roles.length; i++) {
 				roleList.push(roles[i].title);
 			}
 			return roleList;
 		}
-		
+
 		db.query(employeeSql, (err, result) => {
 			if (err) {
 				console.log(err);
 			}
 			let employees = result;
-			console.table(employees);
 			let updateEmpInfo = [
 				{
 					name: "employee",
 					type: "list",
 					message: "Which employee would you like to update the role of?",
-					choices: function(){
+					choices: function () {
 						emp = [];
-						for(i = 0; i < employees.length; i++){
+						for (i = 0; i < employees.length; i++) {
+							// + Because arrays are zero indexed, we add 1 to the managerId to align the database rows with the emp[] array.
 							const managerId = i + 1;
 							emp.push(employees[i].first_name + " " + employees[i].last_name);
 						}
 						return emp;
-					}}];
+					},
+				},
+			];
 			let updateEmpRole = [
 				{
 					name: "newRole",
 					type: "list",
 					message: "What role would you like to assign to this employee?",
-					choices: getRoles()
-				}
+					choices: getRoles(),
+				},
 			];
-			inquirer.prompt(updateEmpInfo)
-			.then(empToUpdate => {
-				console.log(empToUpdate.employee);
+			inquirer.prompt(updateEmpInfo).then((empToUpdate) => {
 				let selectedEmployee = empToUpdate.employee.split(" ")[0];
 				sqlVars.push(selectedEmployee);
-				console.log(sqlVars);
-				
-				inquirer.prompt(updateEmpRole)
-				.then((role)=>{
-					console.log(role.newRole);
+
+				inquirer.prompt(updateEmpRole).then((role) => {
 					let updatedRole = role.newRole;
 					sqlVars.push(updatedRole);
-					console.log(sqlVars);
 					var roleId;
 					db.query("SELECT role_id FROM role WHERE title = ?", sqlVars[1], (err, result) => {
-						if(err) throw err;
+						if (err) throw err;
 						roleId = result[0].role_id;
+						console.log(`${sqlVars[0]}'s role has been updated to ${sqlVars[1]}`);
 						sqlVars.pop();
 						sqlVars.push(roleId);
 						sqlVars.reverse();
-						console.log(sqlVars);
 						let updateSql = "UPDATE employee SET role_id = ? WHERE first_name = ?";
 						db.query(updateSql, sqlVars, (err, result) => {
-								if(err) throw err;
-								console.log(result);
-							})
-					})
-					console.log("----------------" + sqlVars);
-					console.log("ROLE ID: " + roleId);
-
-					
+							if (err) throw err;
+						});
+						cli();
+					});
+					// cli();
 				});
-			})
+			});
 
-				// updateTheRole(sqlVars);
-			
-			console.log(sqlVars);
-
+			// updateTheRole(sqlVars);
 		});
 	});
 }
