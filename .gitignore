@@ -2,3 +2,5 @@
 .eslintrc.js
 /showDeptMgrs.js
 .gitignore
+/.github
+/lib
