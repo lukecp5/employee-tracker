@@ -3,8 +3,7 @@
 
  Employee Tracker is a CLI application built from scratch that allows anyone to easily create and manage an employee database. This application is built with Node.js, MySQL, Inquirer, and various node modules listed in the 'Built With' section below. 
 
-[GIF Demo Here]
- 
+![https://drive.google.com/file/d/1Pxs6RoaEuJPxKlnvm1Gn7UMXh2idTSJp/view](https://github.com/lukecp5/employee-tracker/blob/58255f981bba01fc42bb18c41b7b459f185de19a/Assets/emp-tracker-gif.gif?raw=true) 
  This Node.js application connects to a local MySQL employee database using the _mysql2_ package, and allows you to add departments, roles, and employees. When adding employees, roles, or departments, you will be prompted for various information about the respective entry. It then allows you to view and interact with the data using a dynamic menu. You can view all departments, roles, and employees, and even update the information of a specific entry.
 
 ---
