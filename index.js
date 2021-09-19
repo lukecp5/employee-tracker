@@ -292,7 +292,6 @@ function addEmployee() {
 						let sqlVars = [answers.first_name, answers.last_name, roleId, managerId];
 
 						// + Debugging message used when working out the flow of the addEmployee() function.
-						console.info("Inside genSqlVars function: " + sqlVars);
 
 						// + Execute the insertIntoTable function to insert the new employee into the database, passing in the sqlVars that were created earlier
 						insertIntoTable(sqlVars);
@@ -307,8 +306,6 @@ function addEmployee() {
 						// + If there's an error with the query, print the error. Otherwise, send the console a success message.
 						if (err) {
 							console.error(err);
-						} else {
-							console.info("Manager ID retrieved");
 						}
 						// + Set the managerId = the id of the manager chosen from the manager prompt, found by querying the database for employee.first_name & employee.last_name
 						const managerId = result[0].employee_id;
@@ -327,7 +324,7 @@ function addEmployee() {
 						if (err) {
 							console.log(err);
 						}
-						console.log(`Successfully inserted ${first_name} ${last_name} into the database`);
+						console.log(`Successfully inserted ${sqlVars[0]} ${sqlVars[1]} into the database`);
 						// console.table(result);
 						cli();
 					});
