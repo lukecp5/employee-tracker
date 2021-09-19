@@ -3,7 +3,7 @@
 
  Employee Tracker is a CLI application built from scratch that allows anyone to easily create and manage an employee database. This application is built with Node.js, MySQL, Inquirer, and various node modules listed in the 'Built With' section below. 
 
-![https://drive.google.com/file/d/1Pxs6RoaEuJPxKlnvm1Gn7UMXh2idTSJp/view](https://github.com/lukecp5/employee-tracker/blob/58255f981bba01fc42bb18c41b7b459f185de19a/Assets/emp-tracker-gif.gif?raw=true) 
+[![Demonstration Video](https://github.com/lukecp5/employee-tracker/blob/58255f981bba01fc42bb18c41b7b459f185de19a/Assets/emp-tracker-gif.gif?raw=true)](https://drive.google.com/file/d/1NqhU8W-d0f6aTS-0DcA6_MjpmYvijm3-/view?usp=sharing)
 
 ---
 
