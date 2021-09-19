@@ -57,7 +57,7 @@ Employee Tracker allows you to add an employees full name, role/title, and manag
 * **Visual Studio Code**
 
 ## **Demonstration Video**
-If you'd like to see a full demo of the application, please visit the following link:
+If you'd like to see a full demo of the application, please visit the following link: [Video on Google Drive](https://drive.google.com/file/d/1Pxs6RoaEuJPxKlnvm1Gn7UMXh2idTSJp/view)
 
 
 ## **Contributing**
