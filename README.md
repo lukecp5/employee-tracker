@@ -1,5 +1,5 @@
 # **Employee Tracker**
-![license MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+![license MIT](https://img.shields.io/badge/license-MIT-blue.svg) [![wakatime](https://wakatime.com/badge/github/lukecp5/employee-tracker.svg)](https://wakatime.com/badge/github/lukecp5/employee-tracker)
 
  Employee Tracker is a CLI application built from scratch that allows anyone to easily create and manage an employee database. This application is built with Node.js, MySQL, Inquirer, and various node modules listed in the 'Built With' section below. 
 
